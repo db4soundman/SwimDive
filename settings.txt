@@ -1,0 +1,5 @@
+IP=10.44.65.157
+ANNOUNCER=Steve Baker and Dave Jennings
+SPONSOR=MIAMI IMG SPORTS NETWORK | NCHC.tv
+COMMERCIAL_TITLE=getsomemaction.com
+HASHTAG=#MACtion
