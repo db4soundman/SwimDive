@@ -14,9 +14,21 @@ public:
     School *getSchool() const;
     void setSchool(School *value);
 
+    QString getLaneNumber() const;
+    void setLaneNumber(const QString &value);
+
+    QString getPlace() const;
+    void setPlace(const QString &value);
+
+    QString getTime() const;
+    void setTime(const QString &value);
+
 private:
     QString name;
     School* school;
+    QString laneNumber;
+    QString place;
+    QString time;
 };
 
 #endif // SWIMMER_H

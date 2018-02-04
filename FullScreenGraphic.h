@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QLinearGradient>
+#include "Swimmer.h"
 
 class FullScreenGraphic: public QObject, public QGraphicsRectItem {
     Q_OBJECT
@@ -21,15 +22,19 @@ public:
 
 
 public slots:
-    void showImg();
     void hide();
+    void showResultsWithTime(QList<Swimmer> presults, QString pevent);
+    void showResults(QList<Swimmer> presults, QString pevent);
+    void showLaneAssignments(QList<Swimmer> presults,QString pevent);
 
 private:
 
-    QLinearGradient mainGradient;
-    QPixmap* nchcLogo;
+    QLinearGradient mainGradient, subtitleGradient;
+    QPixmap macLogo;
     bool show;
-    QString leftHeader, rightHeader;
+    QList<Swimmer> resultData;
+    QString eventName;
+    bool laneAssignments, results, showTimes;
 };
 
 #endif // FULLSCREENGRAPHIC_H
