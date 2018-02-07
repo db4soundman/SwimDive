@@ -20,6 +20,7 @@
 #include "CGSimulator.h"
 #include "PastGamesGraphic.h"
 #include "SwimMeet.h"
+#include "FullScreenGraphic.h"
 
 class MiamiAllAccessHockey : public QApplication {
 public:
@@ -44,6 +45,9 @@ public:
 
     static QImage getTrimmedLogo(QString filePath);
 
+    static School getSchoolFromESPN(QString imsName);
+    static School getSwatchFromESPN(QString imsName);
+
 
 private:
     QGraphicsView* tv, *previewSb, *previewLt;
@@ -63,6 +67,9 @@ private:
     bool usingTricaster;
 
     SwimMeet meet;
+    School mac;
+
+    FullScreenGraphic fullScreenGraphic;
 
     void createSchools(QStringList schoolNames);
 

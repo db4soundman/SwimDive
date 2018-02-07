@@ -12,7 +12,7 @@
 
 MainWindow::MainWindow(HockeyGame* game, StandingsGraphic* graphic, CommercialGraphic* comGraphic,
                        NchcScoreboardGraphic* confSbGraphic, ScheduleGraphic *scheduleGraphic,
-                       SerialConsole *serial, ComparisonGraphic *comparisonGraphic, PastGamesGraphic* pgg, SwimMeet *meet, QWidget *parent)
+                       SerialConsole *serial, ComparisonGraphic *comparisonGraphic, PastGamesGraphic* pgg, SwimMeet *meet, FullScreenGraphic* fullScreenGraphic, QWidget *parent)
 
     : QMainWindow(parent), panel(game, graphic, comGraphic, confSbGraphic, scheduleGraphic, comparisonGraphic), standingsPanel(graphic), nchcGui(confSbGraphic),
       awayPlayerEdit(game, false), homePlayerEdit(game, true), awayEdit(game->getAwayTeam()), homeEdit(game->getHomeTeam()),
@@ -22,7 +22,7 @@ MainWindow::MainWindow(HockeyGame* game, StandingsGraphic* graphic, CommercialGr
       displayControls(game,graphic,comGraphic,confSbGraphic,scheduleGraphic,comparisonGraphic, pgg),
       goalies(game), ppCompUi(game), gameStateUi(game), awaypgUi(pgg, game->getAwayTeam(), false), homepgUi(pgg, game->getHomeTeam(), true),
       awayXmlHandler(game->getAwayTeam()), homeXmlHandler(game->getHomeTeam()),
-      awayTextInput(game->getAwayTeam()), homeTextInput(game->getHomeTeam()), swimUi(meet)
+      awayTextInput(game->getAwayTeam()), homeTextInput(game->getHomeTeam()), swimUi(meet, 1, game)
 
 {
     createAlternateContent();
@@ -30,6 +30,10 @@ MainWindow::MainWindow(HockeyGame* game, StandingsGraphic* graphic, CommercialGr
     mainContent.addWidget(&panel);
     setCentralWidget(&swimUi);
     connectWithCG(serial);
+
+    connect(&swimUi, SIGNAL(showLanes(QList<Swimmer>,QString)), fullScreenGraphic, SLOT(showLaneAssignments(QList<Swimmer>,QString)));
+    connect(&swimUi, SIGNAL(showResults(QList<Swimmer>,QString)), fullScreenGraphic, SLOT(showResults(QList<Swimmer>,QString)));
+    connect(&swimUi, SIGNAL(showTimes(QList<Swimmer>,QString)), fullScreenGraphic, SLOT(showResultsWithTime(QList<Swimmer>,QString)));
 
     makeMenu(game, serial, comGraphic);
     connect(&scheduleGui, SIGNAL(show(QList<ScheduleEntry>,bool)), scheduleGraphic, SLOT(receiveData(QList<ScheduleEntry>,bool)));

@@ -13,7 +13,8 @@
 #include <QStringList>
 
 MiamiAllAccessHockey::MiamiAllAccessHockey(int& argc, char* argv[]) :
-    QApplication (argc, argv) {
+    QApplication (argc, argv), mac("Mid-American Conference",QColor(0,167,92), QColor(0,42,92),
+                                    QPixmap::fromImage(getTrimmedLogo(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Logos_Keyable/MAC.PNG"))) {
     setApplicationName("Swimming and Diving");
 }
 
@@ -127,6 +128,12 @@ MiamiAllAccessHockey::exec() {
         team->setPpopp(ppopp);
         team->setGoalies(goalies);
     }
+
+    fullScreenGraphic.setX(graphicsScreen.width()/8);
+    fullScreenGraphic.setY(100);
+
+    scene->addItem(&fullScreenGraphic);
+
     pgg = new PastGamesGraphic(game->getHomeTeam(), game->getAwayTeam());
     pgg->setX(100);
     pgg->setY(650);
@@ -177,7 +184,7 @@ MiamiAllAccessHockey::exec() {
         stats = new StatCrewScanner(game, statcrewName);
 
     SerialConsole con;
-    controlPanel = new MainWindow(game, &standings, commercial, &nchcScoreboard, &scheduleGraphic, &con, comparisonGraphic, pgg, &meet);
+    controlPanel = new MainWindow(game, &standings, commercial, &nchcScoreboard, &scheduleGraphic, &con, comparisonGraphic, pgg, &meet, &fullScreenGraphic);
     controlPanel->show();
     game->connectWithSerialHandler(&con);
 
@@ -285,10 +292,40 @@ QImage MiamiAllAccessHockey::getTrimmedLogo(QString filePath)
     return src.copy(box);
 }
 
+School MiamiAllAccessHockey::getSchoolFromESPN(QString imsName)
+{
+     QFile csv(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Profiles.csv");
+     Profile activeProfile;
+     csv.open(QIODevice::ReadOnly);
+     QTextStream stream(&csv);
+     while (!stream.atEnd()) {
+         QStringList data = stream.readLine().split(',');
+         if (data[4] == imsName) {
+             Profile p(data[1], data[2], data[3], data[0], QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Logos_Keyable/"+data[4]+".PNG",
+                     QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Swatches/"+data[4]+".PNG");
+             activeProfile = p;
+             csv.close();
+             break;
+         }
+     }
+     if (!activeProfile.getLogoPath().isEmpty()) {
+         QImage swatch(activeProfile.getSwatchPath());
+         return School(activeProfile.getFullName(),swatch.pixel(0,10),swatch.pixel(0,14),QPixmap(activeProfile.getLogoPath()));
+     }
+     return School();
+}
+
+School MiamiAllAccessHockey::getSwatchFromESPN(QString imsName)
+{
+    QImage swatch(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Swatches/"+imsName+".PNG");
+    return School("Mid-American Conference",swatch.pixel(0,10),swatch.pixel(0,14),
+                  QPixmap::fromImage(getTrimmedLogo(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Logos_Keyable/"+imsName+".PNG")));
+}
+
 void
 MiamiAllAccessHockey::createSchools(QStringList schoolNames)
 {
-    QList<School> schools;
+    QList<School*> schools;
     QFile csv(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation)+"/IMS Images/Profiles.csv");
     Profile activeProfile;
     for (int i=0; i < schoolNames.length(); i++) {
@@ -307,7 +344,7 @@ MiamiAllAccessHockey::createSchools(QStringList schoolNames)
         }
         if (!activeProfile.getLogoPath().isEmpty()) {
             QImage swatch(activeProfile.getSwatchPath());
-            schools.append(School(activeProfile.getFullName(),swatch.pixel(0,10),swatch.pixel(0,14),QPixmap(activeProfile.getLogoPath())));
+            schools.append(new School(activeProfile.getFullName(),swatch.pixel(0,10),swatch.pixel(0,14),QPixmap::fromImage(getTrimmedLogo(activeProfile.getLogoPath()))));
         }
     }
     meet.setSchools(schools);

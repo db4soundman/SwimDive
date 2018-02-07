@@ -39,13 +39,14 @@
 #include "TextualRosterInput.h"
 #include "SwimEventUI.h"
 #include "SwimMeet.h"
+#include "FullScreenGraphic.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow(HockeyGame* game, StandingsGraphic* graphic, CommercialGraphic* comGraphic,
                NchcScoreboardGraphic* confSbGraphic, ScheduleGraphic* scheduleGraphic, SerialConsole* serial, ComparisonGraphic* comparisonGraphic,
-               PastGamesGraphic *pgg, SwimMeet* meet, QWidget *parent = 0);
+               PastGamesGraphic *pgg, SwimMeet* meet, FullScreenGraphic* fullScreenGraphic, QWidget *parent = 0);
     ~MainWindow();
 
     void connectWithCG(SerialConsole* con);

@@ -10,11 +10,11 @@ class SwimMeet
 public:
     SwimMeet();
 
-    QList<School> getSchools() const;
-    void setSchools(const QList<School> &value);
+    QList<School*> getSchools() const;
+    void setSchools(const QList<School *> &value);
 
 private:
-    QList<School> schools;
+    QList<School*> schools;
 };
 
 #endif // SWIMMEET_H

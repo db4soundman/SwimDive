@@ -1,9 +1,23 @@
 #include "Swimmer.h"
 
+Swimmer::Swimmer()
+{
+
+}
+
 Swimmer::Swimmer(QString name, School *school)
 {
     this->name=name;
     this->school=school;
+}
+
+Swimmer::Swimmer(QString name, School *school, QString laneNumber, QString place, QString time)
+{
+    this->name=name;
+    this->school=school;
+    this->laneNumber=laneNumber;
+    this->place=place;
+    this->time=time;
 }
 
 QString Swimmer::getName() const

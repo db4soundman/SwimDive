@@ -13,7 +13,13 @@ class ParticipantUI : public QWidget
 {
     Q_OBJECT
 public:
-    ParticipantUI(SwimMeet* meet,QWidget *parent = nullptr);
+    ParticipantUI(SwimMeet* meet, QString laneNo,QWidget *parent = nullptr);
+
+    QString getName() const;
+
+    School* getSchool() const;
+
+    QString getLaneNumber() const;
 
 signals:
 

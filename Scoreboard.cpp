@@ -5,6 +5,7 @@
 #include <QFontInfo>
 #include "GraphicChooser.txt"
 #include "MiamiAllAccessHockey.h"
+#include "School.h"
 
 // Flat look
 #define GRADIENT_LEVEL .5
@@ -34,8 +35,7 @@
 #define TOP_BAR_HEIGHT 0
 
 Scoreboard::Scoreboard(QColor awayCol, QColor homeCol, QString awayTeam, QString homeTeam,
-                       QString sponsorText, Clock* clock, QString pAwayRank, QString pHomeRank, QPixmap pawayLogo) :
-    macPrimaryColor(homeCol), macSecondaryColor(awayCol) {
+                       QString sponsorText, Clock* clock, QString pAwayRank, QString pHomeRank, QPixmap pawayLogo)  {
     QFont font("Arial", 28, QFont::Bold);
     font.setCapitalization(QFont::SmallCaps);
     QFont sponsorFont("Arial", 18, QFont::Bold);
@@ -44,7 +44,9 @@ Scoreboard::Scoreboard(QColor awayCol, QColor homeCol, QString awayTeam, QString
     font.setPointSize(40);
     sponsorFont.setPointSize(28);
 #endif
-
+    School mac = MiamiAllAccessHockey::getSwatchFromESPN("MAC");
+    macPrimaryColor = mac.getSecondaryColor();
+    macSecondaryColor = mac.getPrimaryColor();
     nchctv = (MiamiAllAccessHockey::getImgFromResources(":/images/NCHCTV.png",42));
     defaultSponsorText = sponsorFont;
     show = false;
@@ -120,8 +122,8 @@ Scoreboard::prepareColor() {
     if (end == QColor(0,0,0))
         end = QColor(1,1,1);
     macPrimaryGradient.setColorAt(0, macPrimaryColor);
-   // homeGradient.setColorAt(.6, homeColor);
     macPrimaryGradient.setColorAt(1, end);
+   // homeGradient.setColorAt(.6, homeColor);
     //homeGradient.setColorAt(0, end);
 
 

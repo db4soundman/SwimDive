@@ -2,12 +2,12 @@
 
 #include <QHBoxLayout>
 
-ParticipantUI::ParticipantUI(SwimMeet *meet, QWidget *parent) : QWidget(parent)
+ParticipantUI::ParticipantUI(SwimMeet *meet, QString laneNo, QWidget *parent) : QWidget(parent)
 {
     QHBoxLayout* widgetLayout = new QHBoxLayout();
-    laneNumber.setText("1");
+    laneNumber.setText(laneNo);
     for (int i = 0; i < meet->getSchools().length(); i++) {
-        schoolSelector.addItem(meet->getSchools()[i].getName());
+        schoolSelector.addItem(meet->getSchools()[i]->getName());
     }
     lowerThirdButton.setText("Show L3rd");
 
@@ -17,4 +17,20 @@ ParticipantUI::ParticipantUI(SwimMeet *meet, QWidget *parent) : QWidget(parent)
     widgetLayout->addWidget(&lowerThirdButton);
 
     setLayout(widgetLayout);
+    this->meet = meet;
+}
+
+QString ParticipantUI::getName() const
+{
+    return nameField.text();
+}
+
+School* ParticipantUI::getSchool() const
+{
+    return meet->getSchools()[schoolSelector.currentIndex()];
+}
+
+QString ParticipantUI::getLaneNumber() const
+{
+    return laneNumber.text();
 }

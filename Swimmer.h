@@ -6,7 +6,9 @@
 class Swimmer
 {
 public:
+    Swimmer();
     Swimmer(QString name, School* school);
+    Swimmer(QString name, School* school, QString laneNumber, QString place="", QString time="");
 
     QString getName() const;
     void setName(const QString &value);

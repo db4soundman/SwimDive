@@ -5,12 +5,12 @@ SwimMeet::SwimMeet()
 
 }
 
-QList<School> SwimMeet::getSchools() const
+QList<School *> SwimMeet::getSchools() const
 {
     return schools;
 }
 
-void SwimMeet::setSchools(const QList<School> &value)
+void SwimMeet::setSchools(const QList<School*> &value)
 {
     schools = value;
 }

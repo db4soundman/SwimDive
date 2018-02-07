@@ -12,7 +12,7 @@
 class FullScreenGraphic: public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
-    FullScrenGraphic();
+    FullScreenGraphic(QGraphicsRectItem* parent=0);
 
 
 
@@ -29,12 +29,17 @@ public slots:
 
 private:
 
-    QLinearGradient mainGradient, subtitleGradient;
-    QPixmap macLogo;
+    QLinearGradient mainGradient, subtitleGradient, titleGradient;
+    School mac;
     bool show;
     QList<Swimmer> resultData;
     QString eventName;
     bool laneAssignments, results, showTimes;
+    int largestWidth;
+
+
+    void prepareColor();
+    void calculateLargestWidth();
 };
 
 #endif // FULLSCREENGRAPHIC_H

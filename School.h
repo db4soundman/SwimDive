@@ -8,6 +8,7 @@
 class School
 {
 public:
+    School();
     School(QString name, QColor primaryColor, QColor secondaryColor, QPixmap logo);
 
     QString getName() const;

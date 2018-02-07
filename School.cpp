@@ -1,5 +1,10 @@
 #include "School.h"
 
+School::School()
+{
+
+}
+
 School::School(QString name, QColor primaryColor, QColor secondaryColor, QPixmap logo)
 {
     this->name=name;
