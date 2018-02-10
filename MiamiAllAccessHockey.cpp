@@ -151,7 +151,7 @@ MiamiAllAccessHockey::exec() {
 #else
     commercial = new CommercialGraphic(game, awayLogoImg);
     commercial->setX(graphicsScreen.width() / 2 - 500);
-    game->getLt()->setX((graphicsScreen.width() / 2) - 500);
+    game->getLt()->setX(0);
 #endif
     scene->addItem(commercial);
     comparisonGraphic = new ComparisonGraphic(awayColor, homeColor, awayLogoImg);

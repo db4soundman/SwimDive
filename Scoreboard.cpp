@@ -79,6 +79,7 @@ Scoreboard::Scoreboard(QColor awayCol, QColor homeCol, QString awayTeam, QString
 
     this->clock = clock;
     connect(clock, SIGNAL(clockUpdated()), this, SLOT(updateClock()));
+    period = "Prelim";
 }
 
 
@@ -88,16 +89,16 @@ Scoreboard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(option);
     Q_UNUSED(widget);
     if (show) {
-painter->fillRect(0,TOP_BAR_HEIGHT + TEAM_BOX_HEIGHT,SCOREBOARD_WIDTH, PP_BAR_HEIGHT,macSecondaryGradient);
+        painter->fillRect(0,TOP_BAR_HEIGHT + TEAM_BOX_HEIGHT,SCOREBOARD_WIDTH, PP_BAR_HEIGHT,macSecondaryGradient);
         painter->fillRect(0,TOP_BAR_HEIGHT,SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT,macPrimaryGradient);
 
         //Clock - Game time...draw clock first since default color is black
         painter->setPen(QColor(230,230,230));
         //painter->fillRect(CLOCK_FIELD_X, 1 + TOP_BAR_HEIGHT, CLOCK_FIELD_WIDTH,SCOREBOARD_HEIGHT-2, clockGradient);
         painter->setFont(defaultSponsorText);
-       painter->drawText(3, TOP_BAR_HEIGHT, CLOCK_FIELD_WIDTH, SCOREBOARD_HEIGHT, Qt::AlignVCenter, period);
-       painter->setFont(homeName->font());
-         painter->drawText(CLOCK_FIELD_X, TOP_BAR_HEIGHT, CLOCK_FIELD_WIDTH-10, SCOREBOARD_HEIGHT, Qt::AlignRight | Qt::AlignVCenter,clock->toString() );
+        painter->drawText(3, TOP_BAR_HEIGHT, CLOCK_FIELD_WIDTH, SCOREBOARD_HEIGHT, Qt::AlignVCenter, period);
+        painter->setFont(homeName->font());
+        painter->drawText(CLOCK_FIELD_X, TOP_BAR_HEIGHT, CLOCK_FIELD_WIDTH-10, SCOREBOARD_HEIGHT, Qt::AlignRight | Qt::AlignVCenter,clock->toString() );
 
 
         painter->setFont(topBarText->font());
@@ -329,7 +330,7 @@ Scoreboard::toggleShowBoard() {
     show = true;
     if (useTransparency)
         emit transparentField(x()+20,y(),TOP_BAR_WIDTH,TOP_BAR_HEIGHT);
-    emit addNoTransparencyZone(QRect(x() + V_TEAM_BOX_STARTX, y() + TOP_BAR_HEIGHT + TEAM_BOX_Y, TEAM_WIDTH, TEAM_BOX_HEIGHT));
+    //emit addNoTransparencyZone(QRect(x() + V_TEAM_BOX_STARTX, y() + TOP_BAR_HEIGHT + TEAM_BOX_Y, TEAM_WIDTH, TEAM_BOX_HEIGHT));
     scene()->update();
 }
 
@@ -396,6 +397,15 @@ void Scoreboard::usingAllSport()
 void Scoreboard::usingInternalClocks()
 {
     serialPP = false;
+}
+
+void Scoreboard::setPeriod(bool isChamp)
+{
+    if (isChamp) {
+        period = "Championship";
+    } else {
+        period="Prelim";
+    }
 }
 
 bool Scoreboard::getShowClock() const

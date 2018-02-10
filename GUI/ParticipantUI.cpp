@@ -2,8 +2,9 @@
 
 #include <QHBoxLayout>
 
-ParticipantUI::ParticipantUI(SwimMeet *meet, QString laneNo, QWidget *parent) : QWidget(parent)
+ParticipantUI::ParticipantUI(SwimMeet *meet, QString laneNo, HockeyGame *game, QString eventName, QWidget *parent) : QWidget(parent)
 {
+    this->eventName=eventName;
     QHBoxLayout* widgetLayout = new QHBoxLayout();
     laneNumber.setText(laneNo);
     for (int i = 0; i < meet->getSchools().length(); i++) {
@@ -15,6 +16,9 @@ ParticipantUI::ParticipantUI(SwimMeet *meet, QString laneNo, QWidget *parent) : 
     widgetLayout->addWidget(&schoolSelector);
     widgetLayout->addWidget(&nameField);
     widgetLayout->addWidget(&lowerThirdButton);
+
+    connect(&lowerThirdButton, SIGNAL(clicked(bool)), this, SLOT(prepareLt()));
+    connect(this, SIGNAL(showLt(Swimmer,QString)), game->getLt(), SLOT(prepareSticker(Swimmer,QString)));
 
     setLayout(widgetLayout);
     this->meet = meet;
@@ -33,4 +37,15 @@ School* ParticipantUI::getSchool() const
 QString ParticipantUI::getLaneNumber() const
 {
     return laneNumber.text();
+}
+
+void ParticipantUI::prepareLt()
+{
+    Swimmer swimmer(nameField.text(), meet->getSchools()[schoolSelector.currentIndex()],laneNumber.text());
+    emit showLt(swimmer, eventName);
+}
+
+void ParticipantUI::updateEventName(QString name)
+{
+    this->eventName=name;
 }

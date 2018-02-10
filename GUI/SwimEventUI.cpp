@@ -6,31 +6,39 @@
 
 SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, QWidget *parent) : QWidget(parent)
 {
+    connect(&eventName, SIGNAL(textChanged(QString)), game->getSb(),SLOT(changeTopBarText(QString)));
     laneAssignments.setText("Show Lanes");
     finalResults.setText("Show Final Results");
     enterFinalResults.setText("Input Results");
     resetResults.setText("Reset Results");
+    eventName.setText("400 YARD BUTTERFLY");
+    prelimChamp.setText("Championship");
 
     QHBoxLayout* buttons = new QHBoxLayout();
     buttons->addWidget(&laneAssignments);
     buttons->addWidget(&finalResults);
     buttons->addWidget(&enterFinalResults);
     buttons->addWidget(&resetResults);
+    buttons->addWidget(&prelimChamp);
     addTimeShortcut = new QShortcut("Ctrl+" + QString::number(eventNumber % 10), this);
 
     QVBoxLayout* widgetLayout = new QVBoxLayout();
+    widgetLayout->addWidget(&eventName);
     widgetLayout->addWidget(new QLabel("SHORTCUT FOR TIME ENTRY: "+addTimeShortcut->key().toString() ));
     widgetLayout->addLayout(buttons);
 
     for (int i = 0; i < 8; i++) {
-        participantUIs.append(new ParticipantUI(meet, QString::number(i+1)));
+        participantUIs.append(new ParticipantUI(meet, QString::number(i+1),game,eventName.text()));
+        connect(&eventName, SIGNAL(textChanged(QString)), participantUIs.last(), SLOT(updateEventName(QString)));
     }
     for (int i = 0; i < 8; i++) {
         widgetLayout->addWidget(participantUIs[i]);
 
     }
+
+    connect(&prelimChamp, SIGNAL(toggled(bool)), game->getSb(), SLOT(setPeriod(bool)));
     setLayout(widgetLayout);
-    eventName.setText("400 YARD BUTTERFLY");
+
 
     connect(&laneAssignments, SIGNAL(clicked(bool)), this, SLOT(prepLaneAssignments()));
     connect(&finalResults, SIGNAL(clicked(bool)), this, SLOT(prepLaneResults()));

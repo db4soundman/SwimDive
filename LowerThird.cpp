@@ -7,7 +7,7 @@
 
 #define NAME_GRADIENT_LEVEL .3
 #define STAT_GRADIENT_LEVEL .3
-#define NAME_WIDTH 300
+#define NAME_WIDTH 1000
 #define BOX_HEIGHT 38
 LowerThird::LowerThird(int screenWidth, QGraphicsItem* parent) :
     name(""), number("number"), statFont("Arial", 22, QFont::Bold), nameFont("Arial", 28, QFont::Bold), labelFont("Arial", 18, QFont::Bold)
@@ -27,7 +27,7 @@ LowerThird::LowerThird(int screenWidth, QGraphicsItem* parent) :
     homeNameGradient.setFinalStop(0, BOX_HEIGHT*2);
     awayNameGradient.setStart(0, 0);
     awayNameGradient.setFinalStop(0, BOX_HEIGHT*2);
-    statGradient.setStart(0, 0);
+    statGradient.setStart(0, BOX_HEIGHT);
     statGradient.setFinalStop(0, BOX_HEIGHT * 3);
     homeStatGradient.setStart(0, BOX_HEIGHT);
     homeStatGradient.setFinalStop(0, BOX_HEIGHT * 2);
@@ -47,32 +47,43 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(widget);
     if (show) {
 
-        painter->fillRect(0, 0, 1000, BOX_HEIGHT*2, statGradient);
-
-
         painter->setFont(nameFont);
         painter->setPen(QColor(255,255,255));
-        painter->fillRect(0,0,NAME_WIDTH, BOX_HEIGHT*2, gradient);
-        painter->drawText(60, 0, NAME_WIDTH, BOX_HEIGHT, Qt::AlignVCenter, name);
+        QPixmap logo = swimmer.getSchool()->getLogo().scaledToHeight(70, Qt::SmoothTransformation);
+        if (logo.width() > BOX_HEIGHT*2-6) {
+            logo = logo.scaledToWidth(70, Qt::SmoothTransformation);
+        }
+        painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,swimmer.getSchool()->getPrimaryColor());
+        painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(76 - logo.height())/2,logo);
+        painter->fillRect(76,0,displayWidth, BOX_HEIGHT, gradient);
+        painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, swimmer.getName());
         //painter->drawText(60, BOX_HEIGHT, NAME_WIDTH, BOX_HEIGHT, Qt::AlignVCenter, lastName);
         painter->setFont(statFont);
-        painter->drawText(NAME_WIDTH,0, rect().width() - NAME_WIDTH, BOX_HEIGHT, Qt::AlignCenter, eventName);
+        painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
+        painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
+
+        painter->setPen(QColor(196, 213, 242));
+        painter->drawRect(0,0,displayWidth+76,BOX_HEIGHT*2);
     }
 }
 
 void LowerThird::paintPreview(QPainter *painter)
 {
-    painter->fillRect(0, 0, 1000, BOX_HEIGHT*2, statGradient);
+    //painter->fillRect(0, 0, 1000, BOX_HEIGHT*2, statGradient);
 
 
-    painter->setFont(nameFont);
-    painter->setPen(QColor(255,255,255));
-    painter->fillRect(0,0,NAME_WIDTH, BOX_HEIGHT*2, gradient);
-    painter->drawText(60, 0, NAME_WIDTH, BOX_HEIGHT, Qt::AlignVCenter, name);
-    //painter->drawText(60, BOX_HEIGHT, NAME_WIDTH, BOX_HEIGHT, Qt::AlignVCenter, lastName);
-    painter->setFont(statFont);
-    painter->drawText(NAME_WIDTH,0, rect().width() - NAME_WIDTH, BOX_HEIGHT, Qt::AlignCenter, eventName);
-//    painter->drawText(0, 0, 60, BOX_HEIGHT, Qt::AlignCenter, number);
+//    painter->setFont(nameFont);
+//    painter->setPen(QColor(255,255,255));
+//    QPixmap logo = swimmer.getSchool()->getLogo().scaledToHeight(70, Qt::SmoothTransformation);
+//    painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,swimmer.getSchool()->getPrimaryColor());
+//    painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,3,logo);
+//    painter->fillRect(76,0,displayWidth, BOX_HEIGHT, gradient);
+//    painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, name);
+//    //painter->drawText(60, BOX_HEIGHT, NAME_WIDTH, BOX_HEIGHT, Qt::AlignVCenter, lastName);
+//    painter->setFont(statFont);
+//    painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
+//    painter->drawText(NAME_WIDTH,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
+////    painter->drawText(0, 0, 60, BOX_HEIGHT, Qt::AlignCenter, number);
 //    painter->drawText(0, BOX_HEIGHT, 60, BOX_HEIGHT, Qt::AlignCenter, year);
 
 
@@ -158,6 +169,8 @@ void LowerThird::prepareSticker(Swimmer swimmer, QString eventName)
     this->swimmer = swimmer;
     this->eventName = eventName;
     regenNameGradient(swimmer.getSchool()->getPrimaryColor());
+    emit addNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, BOX_HEIGHT*2));
+    getDisplayWidth();
     showLt();
 }
 void LowerThird::prepareColors() {
@@ -178,7 +191,7 @@ void
 LowerThird::prepareFontSize() {
     int subtraction = 1;
     QFontMetrics fontSize(nameFont);
-    while (fontSize.width(name) > NAME_WIDTH) {
+    while (fontSize.width(name) > NAME_WIDTH-10) {
         QFont tempFont("Arial", fontPointSize - subtraction, QFont::Bold);
         //nameFont.setPointSize(fontPointSize - subtraction);
         subtraction++;
@@ -219,13 +232,25 @@ void LowerThird::regenNameGradient(QColor c)
     gradient.setColorAt(0,c);
 }
 
+void LowerThird::getDisplayWidth()
+{
+    QFontMetrics nameMetric(nameFont);
+    int nameWidth = nameMetric.width(swimmer.getName()) + 10;
+
+    QFontMetrics eventMetric(statFont);
+    int eventWidth = eventMetric.width(eventName) + 10;
+    displayWidth = nameWidth > eventWidth ? nameWidth : eventWidth;
+
+    setX(1920/2 - (displayWidth+76)/2);
+}
+
 
 
 void
 LowerThird::hideLt() {
     if (show) {
         show = false;
-        emit removeNoTransparencyZone(QRect(x() + 0 ,y() + 0,NAME_WIDTH, BOX_HEIGHT*2));
+        emit removeNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, BOX_HEIGHT*2));
         scene()->update();
     }
 }
@@ -233,7 +258,7 @@ LowerThird::hideLt() {
 void
 LowerThird::showLt() {
     show = true;
-    emit addNoTransparencyZone(QRect(x() + 0 ,y() + 0,NAME_WIDTH, BOX_HEIGHT*2));
+    //emit addNoTransparencyZone(QRect(x() + 0 ,y() + 0,NAME_WIDTH, BOX_HEIGHT*2));
     scene()->update();
 }
 

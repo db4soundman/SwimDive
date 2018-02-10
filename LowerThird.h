@@ -62,7 +62,9 @@ private:
     void regenNameGradient(QColor c);
 
     bool show;
-    int fontPointSize, statFontPointSize, centerPoint;
+    int fontPointSize, statFontPointSize, centerPoint, displayWidth;
+
+    void getDisplayWidth();
 };
 
 #endif // LOWERTHIRD_H

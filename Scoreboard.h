@@ -55,6 +55,7 @@ public slots:
      void toggleAwayLogoBg(bool on);
      void usingAllSport();
      void usingInternalClocks();
+     void setPeriod(bool isChamp);
 
 private:
 

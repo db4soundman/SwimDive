@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QShortcut>
+#include <QCheckBox>
 
 #include "SwimMeet.h"
 #include "Swimmer.h"
@@ -39,6 +40,7 @@ private:
     QList<QString> times;
     QString places;
     QLineEdit eventName;
+    QCheckBox prelimChamp;
 
     QShortcut* addTimeShortcut;
 
