@@ -16,11 +16,7 @@ HockeyGame::HockeyGame(QString awayName, QString homeName, QColor awayColor, QCo
     homeColor(homeColor), awayRank(awayRank), homeRank(homeRank),
     sb(awayColor, homeColor, awayName, homeName, sponsor, &gameClock, awayRank, homeRank, awayLogo), homeShortName(hsName),
     awayShortName(asName), comparisonPreview(awayColor, homeColor, awayLogo, true),
-    #ifdef GRADIENT_LOOK
-    lt (awayColor, homeColor, screenWidth)
-  #else
-    lt(awayColor, homeColor, screenWidth, awayLogo), previewLt(awayColor, homeColor, screenWidth, awayLogo)
-  #endif
+   lt(screenWidth), previewLt(screenWidth)
 {
     useClock = true;
     isFinal = false;

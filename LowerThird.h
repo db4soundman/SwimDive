@@ -12,14 +12,13 @@
 #include <QRect>
 #include "GraphicChooser.txt"
 
+#include "Swimmer.h"
+#include "School.h"
+
 class LowerThird : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
-#ifdef GRADIENT_LOOK
-    LowerThird(QColor awayColor, QColor homeColor, int screenWidth, QGraphicsItem* parent = 0);
-#else
-    LowerThird(QColor awayColor, QColor homeColor, int screenWidth, QPixmap pawayLogo, QGraphicsItem* parent = 0);
-#endif
+    LowerThird(int screenWidth, QGraphicsItem* parent = 0);
 
     void paint(QPainter * painter,
                const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
@@ -42,27 +41,25 @@ public slots:
                            QList<QString> statValues, bool homeTeam, bool goLive=true);
     void prepareForCustomLt(QString name, QString number, QString year, QList<QString> statLabels,
                            QList<QString> statValues, bool homeTeam,bool goLive=true);
-#ifdef GRADIENT_LOOK
-    void prepareForPpComp(QString awayName, QString awayLabel, QString awayStat,
-                          QString homeName, QString homeLabel, QString homeStat);
-#else
-    void prepareComp(QString awayName, QString awayLabel, QString homeName, QString homeLabel, QList<QString> stats);
-#endif
+    void prepareSticker(Swimmer swimmer, QString eventName);
 private:
     QList<QString> statNames;
     QList<QString> statistics;
-    QString name, number, year, firstName, lastName;
+    QString name, number, year;
     QFont statFont, nameFont, labelFont;
     QLinearGradient gradient, statGradient, homeNameGradient, awayNameGradient, homeStatGradient, awayStatGradient;
-    QColor homeTeamMain, awayTeamMain, stats;
+    QColor stats;
 
-    QString homeName, awayName, homeLabel, awayLabel, homeStat, awayStat;
-#ifndef GRAPHIC_LOOK
-     QPixmap* homeLogo, *awayLogo;
-#endif
+    QString homeName, awayName, homeLabel, awayLabel, eventName;
+
+    School mac;
+    Swimmer swimmer;
+
     void prepareColors();
     void prepareFontSize();
     void adjustFont();
+
+    void regenNameGradient(QColor c);
 
     bool show;
     int fontPointSize, statFontPointSize, centerPoint;
