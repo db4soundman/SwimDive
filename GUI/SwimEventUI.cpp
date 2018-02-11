@@ -3,32 +3,38 @@
 #include <QHBoxLayout>
 
 #include <QInputDialog>
+#include <algorithm>
+#include <functional>
 
-SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, QWidget *parent) : QWidget(parent)
+
+SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, bool diving, QWidget *parent) : QWidget(parent)
 {
-    connect(&eventName, SIGNAL(textChanged(QString)), game->getSb(),SLOT(changeTopBarText(QString)));
-    laneAssignments.setText("Show Lanes");
+    if (!diving) connect(&eventName, SIGNAL(textChanged(QString)), game->getSb(),SLOT(changeTopBarText(QString)));
+    laneAssignments.setText(diving ? "Show Order":"Show Lanes");
     finalResults.setText("Show Final Results");
     enterFinalResults.setText("Input Results");
     resetResults.setText("Reset Results");
     eventName.setText("400 YARD BUTTERFLY");
     prelimChamp.setText("Championship");
-
+    this->diving=diving;
     QHBoxLayout* buttons = new QHBoxLayout();
     buttons->addWidget(&laneAssignments);
     buttons->addWidget(&finalResults);
-    buttons->addWidget(&enterFinalResults);
-    buttons->addWidget(&resetResults);
+    if (!diving) buttons->addWidget(&enterFinalResults);
+    if (!diving) buttons->addWidget(&resetResults);
     buttons->addWidget(&prelimChamp);
     addTimeShortcut = new QShortcut("Ctrl+" + QString::number(eventNumber % 10), this);
 
     QVBoxLayout* widgetLayout = new QVBoxLayout();
     widgetLayout->addWidget(&eventName);
-    widgetLayout->addWidget(new QLabel("SHORTCUT FOR TIME ENTRY: "+addTimeShortcut->key().toString() ));
+    if (diving) {
+        widgetLayout->addWidget(new QLabel("SHORTCUT FOR TIME ENTRY: "+addTimeShortcut->key().toString() ));
+        addTimeShortcut->setEnabled(false);
+    }
     widgetLayout->addLayout(buttons);
 
     for (int i = 0; i < 8; i++) {
-        participantUIs.append(new ParticipantUI(meet, QString::number(i+1),game,eventName.text()));
+        participantUIs.append(new ParticipantUI(meet, QString::number(i+1),game, diving,eventName.text()));
         connect(&eventName, SIGNAL(textChanged(QString)), participantUIs.last(), SLOT(updateEventName(QString)));
     }
     for (int i = 0; i < 8; i++) {
@@ -52,26 +58,42 @@ SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, QWid
 
 void SwimEventUI::prepLaneAssignments()
 {
-    QList<Swimmer>swimmers;
-    for (int i = 0; i < participantUIs.size(); i++) {
-        swimmers.append(Swimmer(participantUIs[i]->getName(),participantUIs[i]->getSchool(),
-                                participantUIs[i]->getLaneNumber()));
+    if (!diving) {
+        QList<Swimmer>swimmers;
+        for (int i = 0; i < participantUIs.size(); i++) {
+            swimmers.append(Swimmer(participantUIs[i]->getName(),participantUIs[i]->getSchool(),
+                                    participantUIs[i]->getLaneNumber()));
+        }
+        emit showLanes(swimmers, eventName.text());
+    } else {
+        QList<Diver> divers;
+        for (int i = 0; i < participantUIs.size(); i++) {
+            divers.append(participantUIs[i]->getDiver());
+        }
+        emit showDiveLanes(divers,eventName.text());
     }
-    emit showLanes(swimmers, eventName.text());
 }
 
 void SwimEventUI::prepLaneResults()
 {
-    QList<Swimmer>swimmers;
-    for (int i = 0; i < participantUIs.size(); i++) {
-        swimmers.append(Swimmer(participantUIs[i]->getName(),participantUIs[i]->getSchool(),
-                                participantUIs[i]->getLaneNumber(),places.mid(i,1),
-                                times.size() > 0 ? times[places.mid(i,1).toInt()-1] : ""));
-    }
-    if (times.size() < 0) {
-        emit showResults(swimmers, eventName.text());
+    if (!diving) {
+        QList<Swimmer>swimmers;
+        for (int i = 0; i < participantUIs.size(); i++) {
+            swimmers.append(Swimmer(participantUIs[i]->getName(),participantUIs[i]->getSchool(),
+                                    participantUIs[i]->getLaneNumber(),places.mid(i,1),
+                                    times.size() > 0 ? times[places.mid(i,1).toInt()-1] : ""));
+        }
+        if (times.size() < 0) {
+            emit showResults(swimmers, eventName.text());
+        } else {
+            emit showTimes(swimmers, eventName.text());
+        }
     } else {
-        emit showTimes(swimmers, eventName.text());
+        QList<Diver> divers;
+        for (int i = 0; i < participantUIs.size(); i++) {
+            divers.append(participantUIs[i]->getDiver());
+            emit showDiveResults(divers,eventName.text());
+        }
     }
 }
 

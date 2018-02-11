@@ -14,6 +14,7 @@
 
 #include "Swimmer.h"
 #include "School.h"
+#include "Diver.h"
 
 class LowerThird : public QObject, public QGraphicsRectItem {
     Q_OBJECT
@@ -42,18 +43,20 @@ public slots:
     void prepareForCustomLt(QString name, QString number, QString year, QList<QString> statLabels,
                            QList<QString> statValues, bool homeTeam,bool goLive=true);
     void prepareSticker(Swimmer swimmer, QString eventName);
+    void prepareDiver(Diver d, QString eventName);
 private:
     QList<QString> statNames;
     QList<QString> statistics;
     QString name, number, year;
     QFont statFont, nameFont, labelFont;
-    QLinearGradient gradient, statGradient, homeNameGradient, awayNameGradient, homeStatGradient, awayStatGradient;
+    QLinearGradient gradient, statGradient, totalGradient, homeNameGradient, awayNameGradient, homeStatGradient, awayStatGradient;
     QColor stats;
 
     QString homeName, awayName, homeLabel, awayLabel, eventName;
 
     School mac;
     Swimmer swimmer;
+    Diver diver;
 
     void prepareColors();
     void prepareFontSize();
@@ -61,10 +64,11 @@ private:
 
     void regenNameGradient(QColor c);
 
-    bool show;
+    bool show, swimming;
     int fontPointSize, statFontPointSize, centerPoint, displayWidth;
 
-    void getDisplayWidth();
+    void getDisplayWidthSwimmer();
+    void getDisplayWidthDiver();
 };
 
 #endif // LOWERTHIRD_H

@@ -9,6 +9,8 @@
 #define STAT_GRADIENT_LEVEL .3
 #define NAME_WIDTH 1000
 #define BOX_HEIGHT 38
+#define DIVER_SCORE_WIDTH 100
+
 LowerThird::LowerThird(int screenWidth, QGraphicsItem* parent) :
     name(""), number("number"), statFont("Arial", 22, QFont::Bold), nameFont("Arial", 28, QFont::Bold), labelFont("Arial", 18, QFont::Bold)
     {
@@ -19,7 +21,7 @@ LowerThird::LowerThird(int screenWidth, QGraphicsItem* parent) :
     mac = MiamiAllAccessHockey::getSwatchFromESPN("MAC");
     fontPointSize = nameFont.pointSize();
     //setPixmap(QPixmap(":/images/LowerThird.png"));
-    setRect(0,0,1000, BOX_HEIGHT*2);
+    setRect(0,0,1000, BOX_HEIGHT*3);
     statFontPointSize = statFont.pointSize();
     gradient.setStart(0, 0);
     gradient.setFinalStop(0, BOX_HEIGHT*3);
@@ -28,16 +30,19 @@ LowerThird::LowerThird(int screenWidth, QGraphicsItem* parent) :
     awayNameGradient.setStart(0, 0);
     awayNameGradient.setFinalStop(0, BOX_HEIGHT*2);
     statGradient.setStart(0, BOX_HEIGHT);
-    statGradient.setFinalStop(0, BOX_HEIGHT * 3);
+    statGradient.setFinalStop(0, BOX_HEIGHT * 2);
     homeStatGradient.setStart(0, BOX_HEIGHT);
     homeStatGradient.setFinalStop(0, BOX_HEIGHT * 2);
     awayStatGradient.setStart(0, 0);
     awayStatGradient.setFinalStop(0, BOX_HEIGHT);
+    totalGradient.setStart(0,0);
+    totalGradient.setFinalStop(0, BOX_HEIGHT*3);
     prepareColors();
     statistics.append("");
     statNames.append("");
     this->centerPoint = screenWidth / 2;
     show = false;
+    swimming = true;
 }
 
 void
@@ -46,24 +51,62 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(option);
     Q_UNUSED(widget);
     if (show) {
+        if (swimming) {
+            painter->setFont(nameFont);
+            painter->setPen(QColor(255,255,255));
+            QPixmap logo = swimmer.getSchool()->getLogo().scaledToHeight(70, Qt::SmoothTransformation);
+            if (logo.width() > BOX_HEIGHT*2-6) {
+                logo = logo.scaledToWidth(70, Qt::SmoothTransformation);
+            }
+            painter->fillRect(76,0,displayWidth, BOX_HEIGHT, gradient);
+            painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, swimmer.getName());
+            painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,swimmer.getSchool()->getPrimaryColor());
+            painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(76 - logo.height())/2,logo);
+            painter->setFont(statFont);
+            painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
+            painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
 
-        painter->setFont(nameFont);
-        painter->setPen(QColor(255,255,255));
-        QPixmap logo = swimmer.getSchool()->getLogo().scaledToHeight(70, Qt::SmoothTransformation);
-        if (logo.width() > BOX_HEIGHT*2-6) {
-            logo = logo.scaledToWidth(70, Qt::SmoothTransformation);
+        } else {
+            painter->setFont(nameFont);
+            painter->setPen(QColor(255,255,255));
+            QPixmap logo = diver.getSchool()->getLogo().scaledToHeight(70, Qt::SmoothTransformation);
+            if (logo.width() > BOX_HEIGHT*2-6) {
+                logo = logo.scaledToWidth(70, Qt::SmoothTransformation);
+            }
+            painter->fillRect(76,0,displayWidth, BOX_HEIGHT, gradient);
+            painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, diver.getName());
+            QList<double>scores = diver.getScores();
+            if (scores.size() > 0) {
+                painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*3,diver.getSchool()->getPrimaryColor());
+                painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(BOX_HEIGHT*3 - logo.height())/2,logo);
+
+                painter->setFont(statFont);
+                painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT*2, statGradient);
+                for (int i = 0; i < scores.size(); i++) {
+                    painter->setFont(statFont);
+                    painter->setPen(QColor(255,255,255));
+                    painter->drawText(76 + DIVER_SCORE_WIDTH*i,BOX_HEIGHT*2,DIVER_SCORE_WIDTH, BOX_HEIGHT, Qt::AlignCenter,QString::number(scores[i],'f',2));
+
+                    painter->setFont(labelFont);
+                    painter->setPen(QColor(200,200,200));
+                    painter->drawText(76 + DIVER_SCORE_WIDTH*i,BOX_HEIGHT,DIVER_SCORE_WIDTH, BOX_HEIGHT, Qt::AlignCenter,QString::number(i+1));
+                }
+                painter->fillRect(displayWidth+76,0,DIVER_SCORE_WIDTH,BOX_HEIGHT*3,totalGradient);
+                painter->setFont(statFont);
+                painter->setPen(QColor(1,1,1));
+                painter->drawText(displayWidth+76,0,DIVER_SCORE_WIDTH,BOX_HEIGHT, Qt::AlignCenter,"TOTAL");
+                painter->drawText(displayWidth+76,BOX_HEIGHT,DIVER_SCORE_WIDTH,BOX_HEIGHT*2, Qt::AlignCenter,QString::number(diver.getTotalScore(),'f',2));
+            } else {
+                painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,diver.getSchool()->getPrimaryColor());
+                painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(BOX_HEIGHT*2 - logo.height())/2,logo);
+                painter->setFont(statFont);
+                painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
+                painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
+            }
+
         }
-        painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,swimmer.getSchool()->getPrimaryColor());
-        painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(76 - logo.height())/2,logo);
-        painter->fillRect(76,0,displayWidth, BOX_HEIGHT, gradient);
-        painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, swimmer.getName());
-        //painter->drawText(60, BOX_HEIGHT, NAME_WIDTH, BOX_HEIGHT, Qt::AlignVCenter, lastName);
-        painter->setFont(statFont);
-        painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
-        painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
-
         painter->setPen(QColor(196, 213, 242));
-        painter->drawRect(0,0,displayWidth+76,BOX_HEIGHT*2);
+        painter->drawRect(0,0,displayWidth+76, swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3);
     }
 }
 
@@ -168,9 +211,20 @@ void LowerThird::prepareSticker(Swimmer swimmer, QString eventName)
 {
     this->swimmer = swimmer;
     this->eventName = eventName;
+    swimming = true;
     regenNameGradient(swimmer.getSchool()->getPrimaryColor());
-    emit addNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, BOX_HEIGHT*2));
-    getDisplayWidth();
+    //emit addNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, BOX_HEIGHT*2));
+    getDisplayWidthSwimmer();
+    showLt();
+}
+
+void LowerThird::prepareDiver(Diver d, QString eventName)
+{
+    this->diver=d;
+    this->eventName=eventName;
+    swimming = false;
+    regenNameGradient(diver.getSchool()->getPrimaryColor());
+    getDisplayWidthDiver();
     showLt();
 }
 void LowerThird::prepareColors() {
@@ -185,6 +239,16 @@ void LowerThird::prepareColors() {
         end = QColor(1,1,1);
     statGradient.setColorAt(1, end);
     statGradient.setColorAt(0,stats);
+
+    QColor c(196, 213, 242);
+    red = -1*c.red() *STAT_GRADIENT_LEVEL + c.red();
+    green = -1*c.green() *STAT_GRADIENT_LEVEL + c.green();
+    blue = -1*c.blue() *STAT_GRADIENT_LEVEL + c.blue();
+    end.setRgb(red, green, blue);
+    if (end == QColor(0,0,0))
+        end = QColor(1,1,1);
+    totalGradient.setColorAt(1, end);
+    totalGradient.setColorAt(0,c);
 }
 
 void
@@ -232,7 +296,7 @@ void LowerThird::regenNameGradient(QColor c)
     gradient.setColorAt(0,c);
 }
 
-void LowerThird::getDisplayWidth()
+void LowerThird::getDisplayWidthSwimmer()
 {
     QFontMetrics nameMetric(nameFont);
     int nameWidth = nameMetric.width(swimmer.getName()) + 10;
@@ -244,13 +308,28 @@ void LowerThird::getDisplayWidth()
     setX(1920/2 - (displayWidth+76)/2);
 }
 
+void LowerThird::getDisplayWidthDiver()
+{
+    QFontMetrics nameMetric(nameFont);
+    int nameWidth = nameMetric.width(diver.getName()) + 10;
+
+    QFontMetrics eventMetric(statFont);
+    int eventWidth = eventMetric.width(eventName) + 10;
+    //displayWidth = nameWidth > eventWidth ? nameWidth : eventWidth;
+
+    int scoreWidth = diver.getScores().length() * DIVER_SCORE_WIDTH == 0 ? eventWidth : diver.getScores().length() * DIVER_SCORE_WIDTH;
+    displayWidth = nameWidth > scoreWidth ? nameWidth : scoreWidth;
+
+    setX(1920/2 - (displayWidth+76 + (diver.getScores().length() > 0 ? 100 : 0))/2);
+}
+
 
 
 void
 LowerThird::hideLt() {
     if (show) {
         show = false;
-        emit removeNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, BOX_HEIGHT*2));
+        emit removeNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, swimming ? BOX_HEIGHT*2 : BOX_HEIGHT*3));
         scene()->update();
     }
 }
@@ -258,7 +337,7 @@ LowerThird::hideLt() {
 void
 LowerThird::showLt() {
     show = true;
-    //emit addNoTransparencyZone(QRect(x() + 0 ,y() + 0,NAME_WIDTH, BOX_HEIGHT*2));
+    emit addNoTransparencyZone(QRect(x() + 0 ,y() + 0, BOX_HEIGHT*2, swimming ? BOX_HEIGHT*2 :  BOX_HEIGHT*3));
     scene()->update();
 }
 

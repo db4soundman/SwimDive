@@ -105,7 +105,8 @@ SOURCES += main.cpp\
     GUI/SwimEventUI.cpp \
     GUI/ParticipantUI.cpp \
     GUI/SwimMeet.cpp \
-    FullScreenGraphic.cpp
+    FullScreenGraphic.cpp \
+    Diver.cpp
 
 HEADERS  += MainWindow.h \
     Scoreboard.h \
@@ -187,7 +188,8 @@ HEADERS  += MainWindow.h \
     GUI/SwimEventUI.h \
     GUI/ParticipantUI.h \
     GUI/SwimMeet.h \
-    FullScreenGraphic.h
+    FullScreenGraphic.h \
+    Diver.h
 
 
 RESOURCES += \

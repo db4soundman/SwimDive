@@ -22,7 +22,7 @@ MainWindow::MainWindow(HockeyGame* game, StandingsGraphic* graphic, CommercialGr
       displayControls(game,graphic,comGraphic,confSbGraphic,scheduleGraphic,comparisonGraphic, pgg),
       goalies(game), ppCompUi(game), gameStateUi(game), awaypgUi(pgg, game->getAwayTeam(), false), homepgUi(pgg, game->getHomeTeam(), true),
       awayXmlHandler(game->getAwayTeam()), homeXmlHandler(game->getHomeTeam()),
-      awayTextInput(game->getAwayTeam()), homeTextInput(game->getHomeTeam()), swimUi(meet, 1, game)
+      awayTextInput(game->getAwayTeam()), homeTextInput(game->getHomeTeam()), swimUi(meet, 1, game,true)
 
 {
     createAlternateContent();
@@ -34,6 +34,9 @@ MainWindow::MainWindow(HockeyGame* game, StandingsGraphic* graphic, CommercialGr
     connect(&swimUi, SIGNAL(showLanes(QList<Swimmer>,QString)), fullScreenGraphic, SLOT(showLaneAssignments(QList<Swimmer>,QString)));
     connect(&swimUi, SIGNAL(showResults(QList<Swimmer>,QString)), fullScreenGraphic, SLOT(showResults(QList<Swimmer>,QString)));
     connect(&swimUi, SIGNAL(showTimes(QList<Swimmer>,QString)), fullScreenGraphic, SLOT(showResultsWithTime(QList<Swimmer>,QString)));
+
+    connect(&swimUi, SIGNAL(showDiveLanes(QList<Diver>,QString)), fullScreenGraphic, SLOT(showDiveOrder(QList<Diver>,QString)));
+    connect(&swimUi, SIGNAL(showDiveResults(QList<Diver>,QString)), fullScreenGraphic, SLOT(showDivingResults(QList<Diver>,QString)));
 
     makeMenu(game, serial, comGraphic);
     connect(&scheduleGui, SIGNAL(show(QList<ScheduleEntry>,bool)), scheduleGraphic, SLOT(receiveData(QList<ScheduleEntry>,bool)));

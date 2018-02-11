@@ -20,11 +20,13 @@ class SwimEventUI : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SwimEventUI(SwimMeet* meet, int eventNumber, HockeyGame* game, QWidget *parent = nullptr);
+    explicit SwimEventUI(SwimMeet* meet, int eventNumber, HockeyGame* game, bool diving=false, QWidget *parent = nullptr);
 
 signals:
     void showLanes(QList<Swimmer> swimmers, QString eventName);
     void showResults(QList<Swimmer> swimmers, QString eventName);
+    void showDiveLanes(QList<Diver> swimmers, QString eventName);
+    void showDiveResults(QList<Diver> swimmers, QString eventName);
     void showTimes(QList<Swimmer> swimmers, QString eventName);
 private slots:
     void prepLaneAssignments();
@@ -41,6 +43,7 @@ private:
     QString places;
     QLineEdit eventName;
     QCheckBox prelimChamp;
+    bool diving;
 
     QShortcut* addTimeShortcut;
 

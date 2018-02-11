@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QLinearGradient>
 #include "Swimmer.h"
+#include "Diver.h"
 
 class FullScreenGraphic: public QObject, public QGraphicsRectItem {
     Q_OBJECT
@@ -28,16 +29,19 @@ public slots:
     void hide();
     void showResultsWithTime(QList<Swimmer> presults, QString pevent);
     void showResults(QList<Swimmer> presults, QString pevent);
+    void showDivingResults(QList<Diver> presults, QString pevent);
     void showLaneAssignments(QList<Swimmer> presults,QString pevent);
+    void showDiveOrder(QList<Diver> presults,QString pevent);
 
 private:
 
     QLinearGradient mainGradient, subtitleGradient, titleGradient;
     School mac;
     bool show;
-    QList<Swimmer> resultData;
+    QList<Swimmer> swimmingResults;
+    QList<Diver> divingResults;
     QString eventName;
-    bool laneAssignments, results, showTimes;
+    bool laneAssignments, results, showTimes, diving;
     int largestWidth;
 
 

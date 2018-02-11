@@ -52,8 +52,15 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         painter->fillRect(0,TITLE_HEIGHT,WIDTH,30,subtitleGradient);
         font.setPointSize(24);
         painter->setFont(font);
-        painter->drawText(0,TITLE_HEIGHT,WIDTH,30,Qt::AlignCenter,laneAssignments ?
-                              "LANE ASSIGNMENTS" : "UNOFFICIAL RESULTS BY LANE");
+        painter->setPen(QColor(1,1,1));
+        if (!diving) {
+            painter->drawText(0,TITLE_HEIGHT,WIDTH,30,Qt::AlignCenter,laneAssignments ?
+                              "LANE ASSIGNMENTS" : "UNOFFICIAL RESULTS");
+        } else {
+            painter->drawText(0,TITLE_HEIGHT,WIDTH,30,Qt::AlignCenter,laneAssignments ?
+                              "DIVING ORDER" : "FINAL RESULTS");
+        }
+        painter->setPen(QColor(255,255,255));
         // Column headrs
 //        if (!laneAssignments) {
 //            painter->drawText(0,HEADER_START,WIDTH/4,30, Qt::AlignCenter, "LANE");
@@ -66,23 +73,43 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 //        }
         QFont font2("Arial", 30, QFont::Bold);
         painter->setFont(font2);
-        for (int i = 0; i < resultData.size(); i++) {
-            painter->setPen(QColor(255,255,255));
-            if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, resultData[i].getLaneNumber());
-            else painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, resultData[i].getPlace());
-            painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,resultData[i].getSchool()->getPrimaryColor());
-            QPixmap logo = resultData[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10,Qt::SmoothTransformation);
-            painter->drawPixmap(40 + ((largestWidth - logo.width()) / 2),SWIMMER_START+ ROW_HEIGHT*i +5, logo);
-            painter->drawText(TEXT_X,SWIMMER_START + ROW_HEIGHT*i,WIDTH/2,ROW_HEIGHT,
-                              Qt::AlignVCenter, resultData[i].getName());
-            if (showTimes)
-                painter->drawText(3*WIDTH/4,SWIMMER_START+ ROW_HEIGHT*i,WIDTH/4,ROW_HEIGHT, Qt::AlignCenter, resultData[i].getTime());
+        if (!diving) {
+            for (int i = 0; i < swimmingResults.size(); i++) {
+                painter->setPen(QColor(255,255,255));
+                if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getLaneNumber());
+                else painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getPlace());
+                painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,swimmingResults[i].getSchool()->getPrimaryColor());
+                QPixmap logo = swimmingResults[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10,Qt::SmoothTransformation);
+                painter->drawPixmap(40 + ((largestWidth - logo.width()) / 2),SWIMMER_START+ ROW_HEIGHT*i +5, logo);
+                painter->drawText(TEXT_X,SWIMMER_START + ROW_HEIGHT*i,WIDTH/2,ROW_HEIGHT,
+                                  Qt::AlignVCenter, swimmingResults[i].getName());
+                if (showTimes)
+                    painter->drawText(3*WIDTH/4,SWIMMER_START+ ROW_HEIGHT*i,WIDTH/4,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getTime());
 
 
-        }
-        for (int i = 0; i < resultData.size(); i++) {
-            painter->setPen(QColor(100,100,100));
-            painter->drawLine(0,SWIMMER_START + ROW_HEIGHT + ROW_HEIGHT*i, WIDTH,SWIMMER_START + ROW_HEIGHT+ ROW_HEIGHT*i);
+            }
+            for (int i = 0; i < swimmingResults.size(); i++) {
+                painter->setPen(QColor(100,100,100));
+                painter->drawLine(0,SWIMMER_START + ROW_HEIGHT + ROW_HEIGHT*i, WIDTH,SWIMMER_START + ROW_HEIGHT+ ROW_HEIGHT*i);
+            }
+        } else {
+            for (int i = 0; i < divingResults.size(); i++) {
+                painter->setPen(QColor(255,255,255));
+                if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, divingResults[i].getDiverNumber());
+                painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,divingResults[i].getSchool()->getPrimaryColor());
+                QPixmap logo = divingResults[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10,Qt::SmoothTransformation);
+                painter->drawPixmap(40 + ((largestWidth - logo.width()) / 2),SWIMMER_START+ ROW_HEIGHT*i +5, logo);
+                painter->drawText(TEXT_X,SWIMMER_START + ROW_HEIGHT*i,WIDTH/2,ROW_HEIGHT,
+                                  Qt::AlignVCenter, divingResults[i].getName());
+                if (results)
+                    painter->drawText(3*WIDTH/4,SWIMMER_START+ ROW_HEIGHT*i,WIDTH/4,ROW_HEIGHT, Qt::AlignCenter, QString::number(divingResults[i].getTotalScore(),'f',2));
+
+
+            }
+            for (int i = 0; i < divingResults.size(); i++) {
+                painter->setPen(QColor(100,100,100));
+                painter->drawLine(0,SWIMMER_START + ROW_HEIGHT + ROW_HEIGHT*i, WIDTH,SWIMMER_START + ROW_HEIGHT+ ROW_HEIGHT*i);
+            }
         }
     }
 }
@@ -98,9 +125,10 @@ void FullScreenGraphic::showResultsWithTime(QList<Swimmer> presults, QString pev
     laneAssignments=false;
     results = true;
     showTimes = true;
-    resultData = presults;
+    swimmingResults = presults;
     eventName=pevent;
     show=true;
+    diving=false;
     calculateLargestWidth();
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
@@ -110,9 +138,23 @@ void FullScreenGraphic::showResults(QList<Swimmer> presults,QString pevent)
     laneAssignments=false;
     results = true;
     showTimes = false;
-    resultData = presults;
+    swimmingResults = presults;
     eventName=pevent;
     show=true;
+    diving=false;
+    calculateLargestWidth();
+    scene()->update(x(), y(), WIDTH, HEIGHT);
+}
+
+void FullScreenGraphic::showDivingResults(QList<Diver> presults, QString pevent)
+{
+    laneAssignments=false;
+    results = true;
+    showTimes = false;
+    divingResults = presults;
+    eventName=pevent;
+    show=true;
+    diving=true;
     calculateLargestWidth();
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
@@ -122,9 +164,23 @@ void FullScreenGraphic::showLaneAssignments(QList<Swimmer> presults,QString peve
     laneAssignments=true;
     results = false;
     showTimes = false;
-    resultData = presults;
+    swimmingResults = presults;
     eventName=pevent;
     show=true;
+    diving=false;
+    calculateLargestWidth();
+    scene()->update(x(), y(), WIDTH, HEIGHT);
+}
+
+void FullScreenGraphic::showDiveOrder(QList<Diver> presults, QString pevent)
+{
+    laneAssignments=true;
+    results = false;
+    showTimes = false;
+    divingResults = presults;
+    eventName=pevent;
+    show=true;
+    diving=true;
     calculateLargestWidth();
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
@@ -181,8 +237,14 @@ void FullScreenGraphic::prepareColor()
 void FullScreenGraphic::calculateLargestWidth()
 {
     QList<int> widths;
-    for (int i = 0; i < resultData.size(); i++) {
-        widths.append(resultData[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10).width());
+    if (!diving) {
+        for (int i = 0; i < swimmingResults.size(); i++) {
+            widths.append(swimmingResults[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10).width());
+        }
+    } else {
+        for (int i = 0; i < divingResults.size(); i++) {
+            widths.append(divingResults[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10).width());
+        }
     }
 
     std::sort(widths.begin(), widths.end(), std::greater<int>());
