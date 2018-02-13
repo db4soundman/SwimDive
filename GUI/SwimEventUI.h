@@ -22,6 +22,8 @@ class SwimEventUI : public QWidget
 public:
     explicit SwimEventUI(SwimMeet* meet, int eventNumber, HockeyGame* game, bool diving=false, QWidget *parent = nullptr);
 
+    void sendEventToScoreboard();
+
 signals:
     void showLanes(QList<Swimmer> swimmers, QString eventName);
     void showResults(QList<Swimmer> swimmers, QString eventName);
@@ -48,6 +50,8 @@ private:
     QShortcut* addTimeShortcut;
 
     Clock* clock;
+
+    HockeyGame* game;
 };
 
 #endif // SWIMEVENTUI_H

@@ -4,7 +4,7 @@
 
 DisplayControls::DisplayControls(HockeyGame* game, StandingsGraphic* graphic, CommercialGraphic* comGraphic,
                                  NchcScoreboardGraphic* sbGraphic, ScheduleGraphic *schedGraphic,
-                                 ComparisonGraphic *comparisonGraphic, PastGamesGraphic* pastGamesGraphic) {
+                                 ComparisonGraphic *comparisonGraphic, FullScreenGraphic *fsg, PastGamesGraphic* pastGamesGraphic) {
     sponsorText = game->getSponsor();
     customtext.setReadOnly(false);
     customtext.setText("");
@@ -45,18 +45,21 @@ DisplayControls::DisplayControls(HockeyGame* game, StandingsGraphic* graphic, Co
     connect(&commericalButton, SIGNAL(clicked()), comGraphic, SLOT(prepareAndShow()));
     connect(&commericalButton, SIGNAL(clicked()), game->getLt(), SLOT(hideLt()));
     connect(&commericalButton, SIGNAL(clicked()), game->getSb(), SLOT(hideBoard()));
+    connect(&commericalButton, SIGNAL(clicked(bool)), fsg, SLOT(hide()));
 
     connect(&sbButton, SIGNAL(clicked()),
             game->getSb(), SLOT(toggleShowBoard()));
 
     connect(&sbButton, SIGNAL(clicked()),
             comGraphic, SLOT(hide()));
+    connect(&sbButton, SIGNAL(clicked(bool)),fsg, SLOT(hide()));
 
     connect(&hideLT, SIGNAL(clicked()), game->getLt(), SLOT(hideLt()));
     connect(&hideLT, SIGNAL(clicked()), schedGraphic, SLOT(hide()));
     connect(&hideLT, SIGNAL(clicked()), comparisonGraphic, SLOT(hideComparison()));
     connect(&hideLT, SIGNAL(clicked()), pastGamesGraphic, SLOT(hide()));
     connect(&hideLT, SIGNAL(clicked()), comparisonGraphic, SLOT(hideComparison()));
+    connect(&hideLT, SIGNAL(clicked(bool)), fsg, SLOT(hide()));
 
     //hide
     connect(&hideButton, SIGNAL(clicked()), game->getSb(), SLOT(hideBoard()));
@@ -67,6 +70,7 @@ DisplayControls::DisplayControls(HockeyGame* game, StandingsGraphic* graphic, Co
     connect(&hideButton, SIGNAL(clicked()), schedGraphic, SLOT(hide()));
     connect(&hideButton, SIGNAL(clicked()), comparisonGraphic, SLOT(hideComparison()));
     connect(&hideButton, SIGNAL(clicked()), pastGamesGraphic, SLOT(hide()));
+    connect(&hideButton, SIGNAL(clicked(bool)), fsg, SLOT(hide()));
 
 }
 

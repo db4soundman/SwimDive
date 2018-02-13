@@ -94,6 +94,8 @@ private:
 
     SwimEventUI swimUi;
 
+    QList<SwimEventUI*> eventUis;
+
     void makeMenu(HockeyGame* game, SerialConsole *console, CommercialGraphic *comGraphic);
 
 

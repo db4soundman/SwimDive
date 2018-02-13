@@ -64,7 +64,7 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(76 - logo.height())/2,logo);
             painter->setFont(statFont);
             painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
-            painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
+            painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName.toUpper());
 
         } else {
             painter->setFont(nameFont);
@@ -101,7 +101,7 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(BOX_HEIGHT*2 - logo.height())/2,logo);
                 painter->setFont(statFont);
                 painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
-                painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName);
+                painter->drawText(76,BOX_HEIGHT, displayWidth, BOX_HEIGHT, Qt::AlignCenter, eventName.toUpper());
             }
 
         }
@@ -337,7 +337,7 @@ LowerThird::hideLt() {
 void
 LowerThird::showLt() {
     show = true;
-    emit addNoTransparencyZone(QRect(x() + 0 ,y() + 0, BOX_HEIGHT*2, swimming ? BOX_HEIGHT*2 :  BOX_HEIGHT*3));
+    emit addNoTransparencyZone(QRect(x(),y(), BOX_HEIGHT*2, swimming ? BOX_HEIGHT*2 :  BOX_HEIGHT*3));
     scene()->update();
 }
 

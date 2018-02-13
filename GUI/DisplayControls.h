@@ -11,13 +11,14 @@
 #include "schedulegraphic.h"
 #include "ComparisonGraphic.h"
 #include "PastGamesGraphic.h"
+#include "FullScreenGraphic.h"
 
 class DisplayControls : public QWidget {
     Q_OBJECT
 public:
     DisplayControls(HockeyGame* game, StandingsGraphic* graphic,
                     CommercialGraphic* comGraphic, NchcScoreboardGraphic* sbGraphic,
-                    ScheduleGraphic* schedGraphic, ComparisonGraphic* comparisonGraphic,
+                    ScheduleGraphic* schedGraphic, ComparisonGraphic* comparisonGraphic, FullScreenGraphic* fsg,
                     PastGamesGraphic* pastGamesGraphic = NULL);
 
 public slots:

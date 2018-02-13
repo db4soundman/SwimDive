@@ -9,12 +9,13 @@
 
 SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, bool diving, QWidget *parent) : QWidget(parent)
 {
+    this->game=game;
     if (!diving) connect(&eventName, SIGNAL(textChanged(QString)), game->getSb(),SLOT(changeTopBarText(QString)));
     laneAssignments.setText(diving ? "Show Order":"Show Lanes");
     finalResults.setText("Show Final Results");
     enterFinalResults.setText("Input Results");
     resetResults.setText("Reset Results");
-    eventName.setText("400 YARD BUTTERFLY");
+    //eventName.setText("400 YARD BUTTERFLY");
     prelimChamp.setText("Championship");
     this->diving=diving;
     QHBoxLayout* buttons = new QHBoxLayout();
@@ -27,8 +28,10 @@ SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, bool
 
     QVBoxLayout* widgetLayout = new QVBoxLayout();
     widgetLayout->addWidget(&eventName);
-    if (diving) {
+    if (!diving) {
         widgetLayout->addWidget(new QLabel("SHORTCUT FOR TIME ENTRY: "+addTimeShortcut->key().toString() ));
+    }
+    else {
         addTimeShortcut->setEnabled(false);
     }
     widgetLayout->addLayout(buttons);
@@ -54,6 +57,11 @@ SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, bool
     addTimeShortcut->setAutoRepeat(false);
 
     clock = game->getGameClock();
+}
+
+void SwimEventUI::sendEventToScoreboard()
+{
+    game->getSb()->changeTopBarText(eventName.text());
 }
 
 void SwimEventUI::prepLaneAssignments()

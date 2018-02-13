@@ -287,7 +287,7 @@ Scoreboard::changeTopBarText(QString text) {
         QFontMetrics temp(topBarText->font());
         fontSize = temp;
     }
-    scene()->update(x(), y() + TEAM_BOX_HEIGHT,SCOREBOARD_WIDTH,PP_BAR_HEIGHT);
+   // scene()->update(x(), y() + TEAM_BOX_HEIGHT,SCOREBOARD_WIDTH,PP_BAR_HEIGHT);
 }
 
 void

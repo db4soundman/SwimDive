@@ -117,6 +117,7 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 void FullScreenGraphic::hide()
 {
     show = false;
+    emit removeNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
 
@@ -130,6 +131,7 @@ void FullScreenGraphic::showResultsWithTime(QList<Swimmer> presults, QString pev
     show=true;
     diving=false;
     calculateLargestWidth();
+    emit addNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
 
@@ -143,6 +145,7 @@ void FullScreenGraphic::showResults(QList<Swimmer> presults,QString pevent)
     show=true;
     diving=false;
     calculateLargestWidth();
+    emit addNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
 
@@ -156,6 +159,7 @@ void FullScreenGraphic::showDivingResults(QList<Diver> presults, QString pevent)
     show=true;
     diving=true;
     calculateLargestWidth();
+    emit addNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
 
@@ -169,6 +173,7 @@ void FullScreenGraphic::showLaneAssignments(QList<Swimmer> presults,QString peve
     show=true;
     diving=false;
     calculateLargestWidth();
+    emit addNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
 
@@ -182,6 +187,7 @@ void FullScreenGraphic::showDiveOrder(QList<Diver> presults, QString pevent)
     show=true;
     diving=true;
     calculateLargestWidth();
+    emit addNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
     scene()->update(x(), y(), WIDTH, HEIGHT);
 }
 

@@ -186,7 +186,7 @@ MiamiAllAccessHockey::exec() {
     SerialConsole con;
     controlPanel = new MainWindow(game, &standings, commercial, &nchcScoreboard, &scheduleGraphic, &con, comparisonGraphic, pgg, &meet, &fullScreenGraphic);
     controlPanel->show();
-    game->connectWithSerialHandler(&con);
+    //game->connectWithSerialHandler(&con);
 
     if (!usingTricaster)
         tv->showFullScreen();
@@ -222,15 +222,11 @@ MiamiAllAccessHockey::exec() {
         connect(comparisonGraphic,SIGNAL(removeNoTransparencyZone(QRect)), tricaster, SLOT(removeNoTransparencyZone(QRect)));
         connect(pgg, SIGNAL(addNoTransparencyZone(QRect)), tricaster, SLOT(addNoTransparencyZone(QRect)));
         connect(pgg,SIGNAL(removeNoTransparencyZone(QRect)), tricaster, SLOT(removeNoTransparencyZone(QRect)));
+        connect(&fullScreenGraphic, SIGNAL(addNoTransparencyZone(QRect)), tricaster, SLOT(addNoTransparencyZone(QRect)));
+        connect(&fullScreenGraphic,SIGNAL(removeNoTransparencyZone(QRect)), tricaster, SLOT(removeNoTransparencyZone(QRect)));
     }
 
     con.show();
-#ifdef DEBUG
-    game->connectWithSerialSimulator(&cgSimulator);
-    controlPanel->connectWithSerialSimulator(&cgSimulator);
-    cgSimulator.show();
-    cgSimulator.sendCgConnected();
-#endif
     return QApplication::exec();
 }
 
