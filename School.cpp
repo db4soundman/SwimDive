@@ -13,6 +13,17 @@ School::School(QString name, QColor primaryColor, QColor secondaryColor, QPixmap
     this->logo=logo;
 }
 
+School::School(QString name, QImage swatch, QPixmap logo)
+{
+    this->name=name;
+    this->primaryLogoBg = swatch.pixel(0,2);
+    this->secondaryLogoBg= swatch.pixel(0,14);
+    this->primaryColor=swatch.pixel(0,5);
+    this->secondaryColor=swatch.pixel(6,5);
+    this->logo=logo;
+
+}
+
 QString School::getName() const
 {
     return name;
@@ -51,4 +62,24 @@ QPixmap School::getLogo() const
 void School::setLogo(const QPixmap &value)
 {
     logo = value;
+}
+
+QColor School::getPrimaryLogoBg() const
+{
+    return primaryLogoBg;
+}
+
+void School::setPrimaryLogoBg(const QColor &value)
+{
+    primaryLogoBg = value;
+}
+
+QColor School::getSecondaryLogoBg() const
+{
+    return secondaryLogoBg;
+}
+
+void School::setSecondaryLogoBg(const QColor &value)
+{
+    secondaryLogoBg = value;
 }

@@ -78,7 +78,7 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
                 painter->setPen(QColor(255,255,255));
                 if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getLaneNumber());
                 else painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getPlace());
-                painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,swimmingResults[i].getSchool()->getPrimaryColor());
+                painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,swimmingResults[i].getSchool()->getPrimaryLogoBg());
                 QPixmap logo = swimmingResults[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10,Qt::SmoothTransformation);
                 painter->drawPixmap(40 + ((largestWidth - logo.width()) / 2),SWIMMER_START+ ROW_HEIGHT*i +5, logo);
                 painter->drawText(TEXT_X,SWIMMER_START + ROW_HEIGHT*i,WIDTH/2,ROW_HEIGHT,
@@ -96,7 +96,7 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
             for (int i = 0; i < divingResults.size(); i++) {
                 painter->setPen(QColor(255,255,255));
                 if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, divingResults[i].getDiverNumber());
-                painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,divingResults[i].getSchool()->getPrimaryColor());
+                painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,divingResults[i].getSchool()->getPrimaryLogoBg());
                 QPixmap logo = divingResults[i].getSchool()->getLogo().scaledToHeight(ROW_HEIGHT-10,Qt::SmoothTransformation);
                 painter->drawPixmap(40 + ((largestWidth - logo.width()) / 2),SWIMMER_START+ ROW_HEIGHT*i +5, logo);
                 painter->drawText(TEXT_X,SWIMMER_START + ROW_HEIGHT*i,WIDTH/2,ROW_HEIGHT,
@@ -116,9 +116,11 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 void FullScreenGraphic::hide()
 {
-    show = false;
-    emit removeNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
-    scene()->update(x(), y(), WIDTH, HEIGHT);
+    if (show) {
+        show = false;
+        emit removeNoTransparencyZone(QRect(x()+40,y(),largestWidth,HEIGHT));
+        scene()->update(x(), y(), WIDTH, HEIGHT);
+    }
 }
 
 void FullScreenGraphic::showResultsWithTime(QList<Swimmer> presults, QString pevent)

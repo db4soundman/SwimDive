@@ -60,7 +60,7 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             }
             painter->fillRect(76,0,displayWidth, BOX_HEIGHT, gradient);
             painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, swimmer.getName());
-            painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,swimmer.getSchool()->getPrimaryColor());
+            painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,swimmer.getSchool()->getPrimaryLogoBg());
             painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(76 - logo.height())/2,logo);
             painter->setFont(statFont);
             painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
@@ -77,7 +77,7 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             painter->drawText(76, 0, displayWidth, BOX_HEIGHT, Qt::AlignCenter, diver.getName());
             QList<double>scores = diver.getScores();
             if (scores.size() > 0) {
-                painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*3,diver.getSchool()->getPrimaryColor());
+                painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*3,diver.getSchool()->getPrimaryLogoBg());
                 painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(BOX_HEIGHT*3 - logo.height())/2,logo);
 
                 painter->setFont(statFont);
@@ -97,7 +97,7 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 painter->drawText(displayWidth+76,0,DIVER_SCORE_WIDTH,BOX_HEIGHT, Qt::AlignCenter,"TOTAL");
                 painter->drawText(displayWidth+76,BOX_HEIGHT,DIVER_SCORE_WIDTH,BOX_HEIGHT*2, Qt::AlignCenter,QString::number(diver.getTotalScore(),'f',2));
             } else {
-                painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,diver.getSchool()->getPrimaryColor());
+                painter->fillRect(0,0,BOX_HEIGHT*2,BOX_HEIGHT*2,diver.getSchool()->getPrimaryLogoBg());
                 painter->drawPixmap((BOX_HEIGHT*2 - logo.width())/2,(BOX_HEIGHT*2 - logo.height())/2,logo);
                 painter->setFont(statFont);
                 painter->fillRect(76,BOX_HEIGHT,displayWidth, BOX_HEIGHT, statGradient);
@@ -106,7 +106,8 @@ LowerThird::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
         }
         painter->setPen(QColor(196, 213, 242));
-        painter->drawRect(0,0,displayWidth+76, swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3);
+        painter->drawRect(0,0,swimming || (!swimming && diver.getScores().size()==0)? displayWidth+76 :displayWidth+76+DIVER_SCORE_WIDTH ,
+                          swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3);
     }
 }
 
@@ -302,7 +303,7 @@ void LowerThird::getDisplayWidthSwimmer()
     int nameWidth = nameMetric.width(swimmer.getName()) + 10;
 
     QFontMetrics eventMetric(statFont);
-    int eventWidth = eventMetric.width(eventName) + 10;
+    int eventWidth = eventMetric.width(eventName.toUpper()) + 10;
     displayWidth = nameWidth > eventWidth ? nameWidth : eventWidth;
 
     setX(1920/2 - (displayWidth+76)/2);
@@ -314,7 +315,7 @@ void LowerThird::getDisplayWidthDiver()
     int nameWidth = nameMetric.width(diver.getName()) + 10;
 
     QFontMetrics eventMetric(statFont);
-    int eventWidth = eventMetric.width(eventName) + 10;
+    int eventWidth = eventMetric.width(eventName.toUpper()) + 10;
     //displayWidth = nameWidth > eventWidth ? nameWidth : eventWidth;
 
     int scoreWidth = diver.getScores().length() * DIVER_SCORE_WIDTH == 0 ? eventWidth : diver.getScores().length() * DIVER_SCORE_WIDTH;
@@ -329,7 +330,7 @@ void
 LowerThird::hideLt() {
     if (show) {
         show = false;
-        emit removeNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, swimming ? BOX_HEIGHT*2 : BOX_HEIGHT*3));
+        emit removeNoTransparencyZone(QRect(x(),y(), BOX_HEIGHT*2, swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3));
         scene()->update();
     }
 }
@@ -337,11 +338,12 @@ LowerThird::hideLt() {
 void
 LowerThird::showLt() {
     show = true;
-    emit addNoTransparencyZone(QRect(x(),y(), BOX_HEIGHT*2, swimming ? BOX_HEIGHT*2 :  BOX_HEIGHT*3));
+    emit addNoTransparencyZone(QRect(x(),y(), BOX_HEIGHT*2, swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3));
     scene()->update();
 }
 
 void LowerThird::showPpComp()
+
 {
     show = false;
     scene()->update();

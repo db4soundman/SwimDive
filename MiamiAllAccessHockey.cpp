@@ -340,7 +340,7 @@ MiamiAllAccessHockey::createSchools(QStringList schoolNames)
         }
         if (!activeProfile.getLogoPath().isEmpty()) {
             QImage swatch(activeProfile.getSwatchPath());
-            schools.append(new School(activeProfile.getFullName(),swatch.pixel(0,10),swatch.pixel(0,14),QPixmap::fromImage(getTrimmedLogo(activeProfile.getLogoPath()))));
+            schools.append(new School(activeProfile.getFullName(),swatch,QPixmap::fromImage(getTrimmedLogo(activeProfile.getLogoPath()))));
         }
     }
     meet.setSchools(schools);
