@@ -75,6 +75,7 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         painter->setFont(font2);
         if (!diving) {
             for (int i = 0; i < swimmingResults.size(); i++) {
+                if (swimmingResults[i].getName().trimmed().isEmpty()) continue;
                 painter->setPen(QColor(255,255,255));
                 if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getLaneNumber());
                 else painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, swimmingResults[i].getPlace());
@@ -94,6 +95,7 @@ void FullScreenGraphic::paint(QPainter *painter, const QStyleOptionGraphicsItem 
             }
         } else {
             for (int i = 0; i < divingResults.size(); i++) {
+                if (divingResults[i].getName().trimmed().isEmpty()) continue;
                 painter->setPen(QColor(255,255,255));
                 if (laneAssignments) painter->drawText(0,SWIMMER_START + ROW_HEIGHT*i,40,ROW_HEIGHT, Qt::AlignCenter, divingResults[i].getDiverNumber());
                 painter->fillRect(40,SWIMMER_START+ ROW_HEIGHT*i,largestWidth,ROW_HEIGHT,divingResults[i].getSchool()->getPrimaryLogoBg());

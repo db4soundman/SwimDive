@@ -82,9 +82,12 @@ MiamiAllAccessHockey::exec() {
     checkAppDirectory();
 
     QStringList schoolList;
-    schoolList << "AKRON" << "BALL_ST" << "BOWLING_GREEN" << "BUFFALO"
-               << "CENTRAL_MICHIGAN" << "EASTERN_MICHIGAN" << "EVANSVILLE" << "KENT_ST" << "MIAMI_OH"
-               << "MISSOURI_ST" << "NORTHERN_ILLINOIS" << "OHIO" << "SOUTHERN_ILLINOIS" << "TOLEDO" << "WESTERN_MICHIGAN";
+//    schoolList << "AKRON" << "BALL_ST" << "BOWLING_GREEN" << "BUFFALO"
+//               << "CENTRAL_MICHIGAN" << "EASTERN_MICHIGAN" << "EVANSVILLE" << "KENT_ST" << "MIAMI_OH"
+//               << "MISSOURI_ST" << "NORTHERN_ILLINOIS" << "OHIO" << "SOUTHERN_ILLINOIS" << "TOLEDO" << "WESTERN_MICHIGAN";
+
+    schoolList <<"BALL_ST" << "EASTERN_MICHIGAN" << "EVANSVILLE" << "MIAMI_OH"
+               << "MISSOURI_ST" << "SOUTHERN_ILLINOIS";
 
     // Make vars, create wizard.
     scene = new QGraphicsScene();

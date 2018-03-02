@@ -62,6 +62,7 @@ SwimEventUI::SwimEventUI(SwimMeet *meet, int eventNumber, HockeyGame *game, bool
 void SwimEventUI::sendEventToScoreboard()
 {
     game->getSb()->changeTopBarText(eventName.text());
+    game->getSb()->setPeriod(prelimChamp.isChecked());
 }
 
 void SwimEventUI::prepLaneAssignments()
@@ -100,8 +101,8 @@ void SwimEventUI::prepLaneResults()
         QList<Diver> divers;
         for (int i = 0; i < participantUIs.size(); i++) {
             divers.append(participantUIs[i]->getDiver());
-            emit showDiveResults(divers,eventName.text());
         }
+        emit showDiveResults(divers,eventName.text());
     }
 }
 

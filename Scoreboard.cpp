@@ -79,7 +79,7 @@ Scoreboard::Scoreboard(QColor awayCol, QColor homeCol, QString awayTeam, QString
 
     this->clock = clock;
     connect(clock, SIGNAL(clockUpdated()), this, SLOT(updateClock()));
-    period = "Prelim";
+    period = "Consolation";
 }
 
 
@@ -404,7 +404,7 @@ void Scoreboard::setPeriod(bool isChamp)
     if (isChamp) {
         period = "Championship";
     } else {
-        period="Prelim";
+        period = "Consolation";
     }
 }
 
