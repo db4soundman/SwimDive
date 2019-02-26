@@ -90,7 +90,7 @@ void SwimEventUI::prepLaneResults()
         for (int i = 0; i < participantUIs.size(); i++) {
             swimmers.append(Swimmer(participantUIs[i]->getName(),participantUIs[i]->getSchool(),
                                     participantUIs[i]->getLaneNumber(),places.mid(i,1),
-                                    times.size() > 0 ? times[places.mid(i,1).toInt()-1] : ""));
+                                    times.size() > 0 && i < times.size()  && i < places.length() ? times[places.mid(i,1).toInt()-1] : ""));
         }
         if (times.size() < 0) {
             emit showResults(swimmers, eventName.text());
@@ -111,7 +111,7 @@ void SwimEventUI::prepLaneResultsWithTimes()
     QList<Swimmer>swimmers;
     for (int i = 0; i < participantUIs.size(); i++) {
         swimmers.append(Swimmer(participantUIs[i]->getName(),participantUIs[i]->getSchool(),
-                                participantUIs[i]->getLaneNumber(), times[i]));
+                                participantUIs[i]->getLaneNumber(), times.size() < i ? times[i] : ""));
     }
     emit showTimes(swimmers, eventName.text());
 }

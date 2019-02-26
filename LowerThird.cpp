@@ -214,6 +214,7 @@ void LowerThird::prepareSticker(Swimmer swimmer, QString eventName)
     this->eventName = eventName;
     swimming = true;
     regenNameGradient(swimmer.getSchool()->getPrimaryColor());
+    emit removeNoTransparencyZone(QRect(x(),y(), BOX_HEIGHT*2, swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3));
     //emit addNoTransparencyZone(QRect(x(), y(), BOX_HEIGHT*2, BOX_HEIGHT*2));
     getDisplayWidthSwimmer();
     showLt();
@@ -224,6 +225,7 @@ void LowerThird::prepareDiver(Diver d, QString eventName)
     this->diver=d;
     this->eventName=eventName;
     swimming = false;
+    emit removeNoTransparencyZone(QRect(x(),y(), BOX_HEIGHT*2, swimming || (!swimming && diver.getScores().size()==0)? BOX_HEIGHT*2 : BOX_HEIGHT*3));
     regenNameGradient(diver.getSchool()->getPrimaryColor());
     getDisplayWidthDiver();
     showLt();
